@@ -7,6 +7,8 @@
 
 -behaviour(supervisor).
 
+-include("cachen.hrl").
+
 %% API
 -export([start_link/0]).
 
@@ -28,7 +30,12 @@ start_link() ->
 
 %% Child :: {Id,StartFunc,Restart,Shutdown,Type,Modules}
 init([]) ->
-    {ok, { {one_for_all, 0, 1}, []} }.
+    Cache =
+        {cachen_master,
+            %% Registering the name of the cache so we don't need to keep track of PID
+            {lru, start_link, [?LRU_NAME, 4, []]},
+            permanent, 5000, worker, [lru]},
+    {ok, { {one_for_one, 10, 10}, [Cache]} }.
 
 %%====================================================================
 %% Internal functions
