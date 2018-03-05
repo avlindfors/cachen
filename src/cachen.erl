@@ -45,6 +45,7 @@ init(Req0, Opts) ->
                 error_logger:info_msg("~p was a MISS~n", [ReqPath]),
                 Reply;
             CachedResponseBody ->
+                %% The entry existed, reply with cached data
                 Reply = cowboy_req:reply(200, #{
                     <<"content-type">> => <<"text/plain">>
                     }, <<"From cache: ", CachedResponseBody/binary>>, Req0),
