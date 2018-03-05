@@ -16,7 +16,10 @@
 
 start(_StartType, _StartArgs) ->
     Dispatch = cowboy_router:compile([
-        {'_', [{'_', cachen, []}]}
+        {'_', [
+            {"/favicon.ico", cowboy_static, {priv_file, cachen, "favicon.ico"}},
+            {'_', cachen, []}
+        ]}
     ]),
     {ok, _} = cowboy:start_clear(http, [{port, 8080}], #{
         env => #{dispatch => Dispatch}
