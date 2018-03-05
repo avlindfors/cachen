@@ -36,15 +36,20 @@ init(Req0, Opts) ->
     Res =
         case ?MODULE:get(ReqPath) of
             undefined ->
-                Val = cowboy_req:reply(200, #{
+                %% Do some work, send back some data
+                Body = <<"Hello world! Requested path: " , ReqPath/binary>>,
+                Reply = cowboy_req:reply(200, #{
                     <<"content-type">> => <<"text/plain">>
-                }, <<"Hello world!">>, Req0),
-                ?MODULE:add(ReqPath, Val),
+                    }, Body, Req0),
+                ?MODULE:add(ReqPath, Body),
                 error_logger:info_msg("~p was a MISS~n", [ReqPath]),
-                Val;
-            Hit ->
+                Reply;
+            CachedResponseBody ->
+                Reply = cowboy_req:reply(200, #{
+                    <<"content-type">> => <<"text/plain">>
+                    }, <<"From cache: ", CachedResponseBody/binary>>, Req0),
                 error_logger:info_msg("~p was a HIT~n", [ReqPath]),
-                Hit
+                Reply
         end,
     {ok, Res, Opts}.
 
