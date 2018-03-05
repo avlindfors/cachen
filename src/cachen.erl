@@ -2,7 +2,7 @@
 %%% @author Alexander Lindfors
 %%% @copyright (C) 2018, Alexander Lindfors
 %%% @doc
-%%%
+%%% Simple module to glue together an LRU cache project and Cowboy HTTP server
 %%% @end
 %%% Created : 27. Feb 2018 13:14
 %%%-------------------------------------------------------------------
@@ -33,6 +33,7 @@ init(Req0, Opts) ->
     Res = hit_or_miss_and_reply(Req0),
     {ok, Res, Opts}.
 
+%% Utility functions
 purge() ->
     lru:purge(?LRU_NAME).
 
