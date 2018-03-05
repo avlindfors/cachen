@@ -16,10 +16,11 @@
 -export([
     add/2,
     get/1,
-    exists/1,
+    contains/1,
     peek/1,
-    clear/0,
     items/0,
+    purge/0,
+    size/0,
     max_size/0,
     set_max_size/1
 ]).
@@ -35,7 +36,6 @@ init(Req0, Opts) ->
     Res =
         case ?MODULE:get(ReqPath) of
             undefined ->
-                error_logger:info_msg("Miss~n"),
                 Val = cowboy_req:reply(200, #{
                     <<"content-type">> => <<"text/plain">>
                 }, <<"Hello world!">>, Req0),
@@ -46,10 +46,6 @@ init(Req0, Opts) ->
                 error_logger:info_msg("~p was a HIT~n", [ReqPath]),
                 Hit
         end,
-    %Req = cowboy_req:reply(200, #{
-    %    <<"content-type">> => <<"text/plain">>
-    %}, <<"Hello world!">>, Req0),
-    %error_logger:info_msg("Sending req: ~p~n", [Opts]),
     {ok, Res, Opts}.
 
 add(K,V) ->
@@ -58,20 +54,24 @@ add(K,V) ->
 get(K) ->
     lru:get(?LRU_NAME, K).
 
-exists(K) ->
+contains(K) ->
     lru:contains(?LRU_NAME, K).
 
 peek(K) ->
     lru:peek(?LRU_NAME, K).
 
-clear() ->
+purge() ->
     lru:purge(?LRU_NAME).
 
 items() ->
-    info(size).
+    Keys = lru:keys(?LRU_NAME),
+    [{X, lru:peek(?LRU_NAME, X)} || X <- Keys].
+
+size() ->
+    lru_info(size).
 
 max_size() ->
-    info(max_size).
+    lru_info(max_size).
 
 set_max_size(NewSize) ->
     OldSize = max_size(),
@@ -88,6 +88,6 @@ populate(N) ->
         end, lists:seq(1,N)).
 
 %% Internal
-info(Prop) ->
+lru_info(Prop) ->
     Info = lru:info(?LRU_NAME),
     proplists:get_value(Prop, Info).
