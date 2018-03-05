@@ -53,7 +53,7 @@ $ rebar3 compile
 * There will be a request for the resource at `"/"`
 * This will be a cache miss and the response will be cached before it is returned
     * The cache now holds 1 entry (`cachen:size()` in the erl shell)
-* Update the page, this will result in a cache hit for `"/"` and the response is fetched from cache storage
+* Reload the page, this will result in a cache hit for `"/"` and the response is fetched from cache storage
     * The cache still holds 1 entry
 * In the same session, go to `localhost:8080/test`
 * This will cause a cache miss for the resource at `"/test"`
