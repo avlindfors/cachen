@@ -38,7 +38,7 @@ or simply
 rebar3 compile
 ```
 
-#### Examples 
+## Examples 
 
 * Watch the terminal window running `cachen` 
 * Go to `localhost:8080` in your browser 
@@ -50,8 +50,21 @@ rebar3 compile
 * In the same session, go to `localhost:8080/test`
 * This will cause a cache miss for the resource at `"/test"` and a hit for `"/favicon.ico"`
     * The cache now holds 3 entries
- 
+
+## Functions
+The most important functions are listed below:
+* `set_max_size/1`:
+    * Set the maximum size of the cache
+* `max_size/0`:
+    * Returns the maximum size of the cache
+* `size/0`:
+    * Returns the current number of entries in the cache
+* `items/0`:
+    * Returns a list of tuples representing the key-value pairs in the cache
+
+**Most functions are exported at the moment to facilitate development and testing**
 ## Important notes 
 * v 0.0.1
     * Nothing is persistent
     * The default cache size is 4, for easy debugging and testing
+        * This can be changed at runtime by using the function `cachen:set_max_size/1` or in code in `cachen_sup.erl`

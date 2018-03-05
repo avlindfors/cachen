@@ -68,10 +68,10 @@ items() ->
     [{X, lru:peek(?LRU_NAME, X)} || X <- Keys].
 
 size() ->
-    info(size).
+    lru_info(size).
 
 max_size() ->
-    info(max_size).
+    lru_info(max_size).
 
 set_max_size(NewSize) ->
     OldSize = max_size(),
@@ -88,6 +88,6 @@ populate(N) ->
         end, lists:seq(1,N)).
 
 %% Internal
-info(Prop) ->
+lru_info(Prop) ->
     Info = lru:info(?LRU_NAME),
     proplists:get_value(Prop, Info).
