@@ -58,21 +58,21 @@ hit_or_miss_and_reply(Req0) ->
         undefined ->
             %% Do some work, send back some data
             timer:sleep(2000),
+            error_logger:info_msg("~p was a MISS~n", [ReqPath]),
             Body = ReqPath,
             Reply = cowboy_req:reply(200,
                 #{<<"content-type">> => <<"text/plain">>},
                 <<"Path: ", Body/binary>>,
                 Req0),
             lru:add(?LRU_NAME, ReqPath, Body),
-            error_logger:info_msg("~p was a MISS~n", [ReqPath]),
             Reply;
         CachedResponseBody ->
+            error_logger:info_msg("~p was a HIT~n", [ReqPath]),
             %% The entry existed, reply with cached data
             Reply = cowboy_req:reply(200,
                 #{<<"content-type">> => <<"text/plain">>},
                 <<"From cache: ", CachedResponseBody/binary>>,
                 Req0),
-            error_logger:info_msg("~p was a HIT~n", [ReqPath]),
             Reply
     end.
 

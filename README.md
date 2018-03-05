@@ -50,14 +50,14 @@ $ rebar3 compile
 
 * Watch the erl shell running `cachen` 
 * Go to `localhost:8080` in your browser 
-* There will be two requests, one for the resource at path `"/"` and one for `"/favicon.ico"`
-* The cache has not seen the resources before so the responses will be cached before they are returned
-    * The cache now holds 2 entries (`cachen:size()` in the erl shell)
+* There will be a request for the resource at `"/"`
+* This will be a cache miss and the response will be cached before it is returned
+    * The cache now holds 1 entry (`cachen:size()` in the erl shell)
 * Update the page, this will result in a cache hit for `"/"` and the response is fetched from cache storage
-    * The cache still holds 2 entries
+    * The cache still holds 1 entry
 * In the same session, go to `localhost:8080/test`
-* This will cause a cache miss for the resource at `"/test"` and a hit for `"/favicon.ico"`
-    * The cache now holds 3 entries
+* This will cause a cache miss for the resource at `"/test"`
+    * The cache now holds 2 entries
 
 ## Functions
 The most important functions are listed below:
