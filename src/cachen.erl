@@ -28,14 +28,29 @@
 
 start() ->
     error_logger:info_msg("Starting cachen.. ~n"),
-    application:ensure_all_started(?MODULE),
-application:.
+    application:ensure_all_started(?MODULE).
 
 init(Req0, Opts) ->
+    ReqPath = cowboy_req:path(Req0),
+    Res =
+        case ?MODULE:get(ReqPath) of
+            undefined ->
+                error_logger:info_msg("Miss~n"),
+                Val = cowboy_req:reply(200, #{
+                    <<"content-type">> => <<"text/plain">>
+                }, <<"Hello world!">>, Req0),
+                ?MODULE:add(ReqPath, Val),
+                error_logger:info_msg("~p was a MISS~n", [ReqPath]),
+                Val;
+            Hit ->
+                error_logger:info_msg("~p was a HIT~n", [ReqPath]),
+                Hit
+        end,
     %Req = cowboy_req:reply(200, #{
     %    <<"content-type">> => <<"text/plain">>
     %}, <<"Hello world!">>, Req0),
-    {ok, Req0, Opts}.
+    %error_logger:info_msg("Sending req: ~p~n", [Opts]),
+    {ok, Res, Opts}.
 
 add(K,V) ->
     lru:add(?LRU_NAME, K,V).
