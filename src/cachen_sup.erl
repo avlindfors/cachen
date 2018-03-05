@@ -30,12 +30,12 @@ start_link() ->
 
 %% Child :: {Id,StartFunc,Restart,Shutdown,Type,Modules}
 init([]) ->
-    Cache =
-        {cachen_master,
+    LRU =
+        {lru_master,
             %% Registering the name of the cache so we don't need to keep track of PID
             {lru, start_link, [?LRU_NAME, 4, []]},
             permanent, 5000, worker, [lru]},
-    {ok, { {one_for_one, 10, 10}, [Cache]} }.
+    {ok, {{one_for_one, 10, 10}, [LRU]}}.
 
 %%====================================================================
 %% Internal functions
